@@ -1,0 +1,6 @@
+standup_cli.egg-info/
+standup_cli_tool.egg-info/
+dist/
+build/
+__pycache__/
+*.pyc
