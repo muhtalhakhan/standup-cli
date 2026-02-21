@@ -1,6 +1,6 @@
 {
   "name": "standup-cli-tool",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "⚡ Generate your daily standup from git commits — right in your terminal",
   "main": "bin/standup.js",
   "bin": {
