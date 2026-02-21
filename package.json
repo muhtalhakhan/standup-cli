@@ -1,0 +1,35 @@
+{
+  "name": "standup-cli",
+  "version": "0.1.0",
+  "description": "⚡ Generate your daily standup from git commits — right in your terminal",
+  "main": "bin/standup.js",
+  "bin": {
+    "standup": "./bin/standup.js"
+  },
+  "scripts": {
+    "start": "node bin/standup.js"
+  },
+  "keywords": [
+    "standup",
+    "cli",
+    "git",
+    "developer",
+    "productivity",
+    "daily",
+    "scrum",
+    "terminal"
+  ],
+  "author": "Your Name <you@example.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/muhtalhakhan/standup-cli"
+  },
+  "homepage": "https://github.com/muhtalhakhan/standup-cli#readme",
+  "bugs": {
+    "url": "https://github.com/muhtalhakhan/standup-cli/issues"
+  }
+}
