@@ -7,7 +7,7 @@ Never manually write a standup again. `standup-cli` scans your git commits from 
 ```
 $ standup
 
-  ⚡ standup-cli
+  ⚡ standup-cli-tool
   Generate your daily standup in seconds
 
   🔍 Scanning git commits from last 24hrs...
@@ -38,12 +38,12 @@ $ standup
 
 **via npm:**
 ```bash
-npm install -g standup-cli
+npm install -g standup-cli-tool
 ```
 
 **via pip:**
 ```bash
-pip install standup-cli
+pip install standup-cli-tool
 ```
 
 ## Usage
