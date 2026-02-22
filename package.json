@@ -1,6 +1,6 @@
 {
   "name": "standup-cli-tool",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "⚡ Generate your daily standup from git commits — right in your terminal",
   "main": "bin/standup.js",
   "bin": {
@@ -19,7 +19,7 @@
     "scrum",
     "terminal"
   ],
-  "author": "Your Name <you@example.com>",
+  "author": "Muhammad Talha Khan <talhakhan325@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": ">=14"
