@@ -1,4 +1,4 @@
-#⚡ standup-cli
+# ⚡ standup-cli
 
 > Generate your daily standup from git commits — right in your terminal.
 
