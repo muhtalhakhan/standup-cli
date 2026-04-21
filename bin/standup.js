@@ -185,7 +185,25 @@ function getRepoSummary(repoPath) {
       commit_count: commits.length,
       files_changed: commits.reduce((sum, cmt) => sum + cmt.files_changed, 0),
     };
-  } catch {
+  } catch (err) {
+    const rawStderr = Buffer.isBuffer(err?.stderr) ? err.stderr.toString('utf8') : String(err?.stderr || '');
+    const rawStdout = Buffer.isBuffer(err?.stdout) ? err.stdout.toString('utf8') : String(err?.stdout || '');
+    const rawMessage = String(err?.message || '');
+    const haystack = `${rawMessage}\n${rawStderr}\n${rawStdout}`.toLowerCase();
+    if (haystack.includes('detected dubious ownership in repository')) {
+      return {
+        error: 'dubious_ownership',
+        path: absPath,
+        fix: `git config --global --add safe.directory "${absPath}"`,
+      };
+    }
+    if (haystack.includes('spawnsync git eperm')) {
+      return {
+        error: 'git_permission',
+        path: absPath,
+        fix: 'Ensure git is accessible and that your shell has permission to execute it.',
+      };
+    }
     return null;
   }
 }
@@ -393,10 +411,17 @@ async function main() {
   console.log(paint(c.dim, '  Scanning git commits from last 24hrs...'));
   const repoSummaries = [];
   const skipped = [];
+  const dubious = [];
   for (const repoPath of repoPaths) {
     const summary = getRepoSummary(repoPath);
     if (!summary) {
       skipped.push(repoPath);
+      continue;
+    }
+    if (summary.error) {
+      if (summary.error === 'dubious_ownership') dubious.push(summary);
+      else if (summary.error === 'git_permission') dubious.push(summary);
+      else skipped.push(repoPath);
       continue;
     }
     repoSummaries.push(summary);
@@ -406,6 +431,15 @@ async function main() {
         `  ${summary.name}: ${summary.commit_count} commit(s), ${summary.files_changed} file(s) changed`
       )
     );
+  }
+  for (const issue of dubious) {
+    if (issue.error === 'dubious_ownership') {
+      console.log(paint(c.yellow, `  Warning: Git safe.directory blocked repo ${issue.path}`));
+      console.log(paint(c.yellow, `  Run: ${issue.fix}`));
+    } else {
+      console.log(paint(c.yellow, `  Warning: git command failed for repo ${issue.path}`));
+      console.log(paint(c.yellow, `  Hint: ${issue.fix}`));
+    }
   }
   for (const skippedRepo of skipped) {
     console.log(paint(c.yellow, `  Warning: skipped non-git repo ${skippedRepo}`));

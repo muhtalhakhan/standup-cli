@@ -183,6 +183,13 @@ def get_repo_summary(repo_path):
             text=True,
         )
         if result.returncode != 0:
+            stderr = (result.stderr or "") + "\n" + (result.stdout or "")
+            if "detected dubious ownership in repository" in stderr.lower():
+                return {
+                    "error": "dubious_ownership",
+                    "path": abs_path,
+                    "fix": f'git config --global --add safe.directory "{abs_path}"',
+                }
             return None
         commits = parse_git_log_with_numstat(result.stdout.strip())
         return {
@@ -349,10 +356,17 @@ def main():
     print(paint(DIM, "  Scanning git commits from last 24hrs..."))
     repo_summaries = []
     skipped = []
+    dubious = []
     for repo_path in repo_paths:
         summary = get_repo_summary(repo_path)
         if summary is None:
             skipped.append(repo_path)
+            continue
+        if "error" in summary:
+            if summary["error"] == "dubious_ownership":
+                dubious.append(summary)
+            else:
+                skipped.append(repo_path)
             continue
         repo_summaries.append(summary)
         print(
@@ -363,6 +377,14 @@ def main():
             )
         )
 
+    for issue in dubious:
+        print(
+            paint(
+                YELLOW,
+                f"  Warning: Git safe.directory blocked repo {issue['path']}",
+            )
+        )
+        print(paint(YELLOW, f"  Run: {issue['fix']}"))
     if skipped:
         for repo_path in skipped:
             print(paint(YELLOW, f"  Warning: skipped non-git repo {repo_path}"))
